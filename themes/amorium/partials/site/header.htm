@@ -1,0 +1,45 @@
+{% set navItems = mainNavigation.items %}
+{% set brandName = business().business_name ?: this.theme.getConfigValue('name') %}
+
+<nav class="navbar {{ hasHero ? '' : 'is-sticky' }}" id="navbar">
+    <div class="container flex flex-wrap items-center justify-end">
+        <a class="navbar-brand" href="{{ 'index'|page }}">
+            {% if this.theme.logo %}
+                <img class="l-light logo-image" src="{{ (this.theme.logo_light ?: this.theme.logo)|media }}" alt="{{ brandName }}" />
+                <img class="l-dark logo-image" src="{{ this.theme.logo|media }}" alt="{{ brandName }}" />
+            {% else %}
+                <span class="l-light text-2xl font-medium tracking-wide text-white">{{ brandName }}</span>
+                <span class="l-dark text-2xl font-medium tracking-wide text-body dark:text-night-body">{{ brandName }}</span>
+            {% endif %}
+        </a>
+
+        <div class="nav-icons flex items-center lg_992:order-2 ms-auto">
+            {% partial 'site/site-picker' %}
+            <a href="#contact" class="ms-3 hidden rounded-md border border-primary bg-primary px-5 py-2 text-center align-middle text-base font-normal tracking-wide text-white duration-500 hover:border-primary-dark hover:bg-primary-dark lg_992:inline-block">{{ 'Get in Touch'|_ }}</a>
+            <button data-collapse="menu-collapse" type="button" class="collapse-btn group ms-3 inline-flex size-6 items-center justify-center text-body lg_992:hidden dark:text-night-body" aria-controls="menu-collapse" aria-expanded="false">
+                <span class="sr-only">{{ 'Open menu'|_ }}</span>
+                <span class="relative block h-3.5 w-5" aria-hidden="true">
+                    <span class="absolute inset-x-0 top-0 h-0.5 rounded-full bg-current transition duration-300 group-aria-expanded:translate-y-1.5 group-aria-expanded:rotate-45"></span>
+                    <span class="absolute inset-x-0 top-1.5 h-0.5 rounded-full bg-current transition duration-300 group-aria-expanded:opacity-0"></span>
+                    <span class="absolute inset-x-0 top-3 h-0.5 rounded-full bg-current transition duration-300 group-aria-expanded:-translate-y-1.5 group-aria-expanded:-rotate-45"></span>
+                </span>
+            </button>
+        </div>
+
+        <div class="navigation lg_992:order-1 lg_992:flex hidden" id="menu-collapse">
+            <ul class="navbar-nav nav-light" id="navbar-navlist">
+                {% for item in navItems %}
+                    <li class="nav-item group relative">
+                        {% partial 'site/nav-link' item=item caret=item.items activeClass='active' inactiveClass='' class='nav-link' %}
+
+                        {% if item.items %}
+                            <div class="ps-3 lg_992:invisible lg_992:absolute lg_992:start-0 lg_992:top-full lg_992:z-50 lg_992:min-w-52 lg_992:translate-y-1 lg_992:rounded-md lg_992:bg-page lg_992:p-2 lg_992:opacity-0 lg_992:shadow-lg lg_992:transition lg_992:duration-500 lg_992:group-hover:visible lg_992:group-hover:translate-y-0 lg_992:group-hover:opacity-100 lg_992:group-focus-within:visible lg_992:group-focus-within:translate-y-0 lg_992:group-focus-within:opacity-100 dark:lg_992:bg-night-page">
+                                {% partial 'site/nav-dropdown' items=item.items %}
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</nav>
