@@ -16,15 +16,15 @@ Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch
 2. Temayı ve eklentileri kurun. October Marketplace'ten veya doğrudan bu depolardan:
 
    ```bash
-   php artisan plugin:install Amorium.Pages --from=https://github.com/tulparstudyo/amorium-pages-plugin.git
-   php artisan plugin:install Amorium.Sections --from=https://github.com/tulparstudyo/amorium-sections-plugin.git
-   php artisan plugin:install Amorium.Post --from=https://github.com/tulparstudyo/amorium-post-plugin.git
-   php artisan plugin:install Amorium.Navigation --from=https://github.com/tulparstudyo/amorium-navigation-plugin.git
-   php artisan plugin:install Amorium.Form --from=https://github.com/tulparstudyo/amorium-form-plugin.git
-   php artisan plugin:install Amorium.Business --from=https://github.com/tulparstudyo/amorium-business-plugin.git
-   php artisan plugin:install Amorium.Demo --from=https://github.com/tulparstudyo/amorium-demo-plugin.git
-   php artisan plugin:install Amorium.Translate --from=https://github.com/tulparstudyo/amorium-translate-plugin.git
-   php artisan theme:install Amorium.Amorium --from=https://github.com/tulparstudyo/amorium-theme.git
+   php artisan plugin:install Amorium.Pages --from=https://github.com/amorium-october/pages.git
+   php artisan plugin:install Amorium.Sections --from=https://github.com/amorium-october/sections.git
+   php artisan plugin:install Amorium.Post --from=https://github.com/amorium-october/post.git
+   php artisan plugin:install Amorium.Navigation --from=https://github.com/amorium-october/navigation.git
+   php artisan plugin:install Amorium.Form --from=https://github.com/amorium-october/form.git
+   php artisan plugin:install Amorium.Business --from=https://github.com/amorium-october/business.git
+   php artisan plugin:install Amorium.Demo --from=https://github.com/amorium-october/demo.git
+   php artisan plugin:install Amorium.Translate --from=https://github.com/amorium-october/translate.git
+   php artisan theme:install Amorium.Amorium --from=https://github.com/amorium-october/theme.git
    ```
 
 3. Kök dizinde sırasıyla çalıştırın:
