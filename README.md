@@ -16,15 +16,15 @@ Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch
 2. Temayı ve eklentileri kurun. October Marketplace'ten veya doğrudan bu depolardan:
 
    ```bash
-   php artisan plugin:install Amorium.Pages --from=https://github.com/amorium-october/pages.git
-   php artisan plugin:install Amorium.Sections --from=https://github.com/amorium-october/sections.git
-   php artisan plugin:install Amorium.Post --from=https://github.com/amorium-october/post.git
-   php artisan plugin:install Amorium.Navigation --from=https://github.com/amorium-october/navigation.git
-   php artisan plugin:install Amorium.Form --from=https://github.com/amorium-october/form.git
-   php artisan plugin:install Amorium.Business --from=https://github.com/amorium-october/business.git
-   php artisan plugin:install Amorium.Demo --from=https://github.com/amorium-october/demo.git
-   php artisan plugin:install Amorium.Translate --from=https://github.com/amorium-october/translate.git
-   php artisan theme:install Amorium.Amorium --from=https://github.com/amorium-october/theme.git
+   php artisan plugin:install Amorium.Pages --from=https://github.com/AmoriumCms/pages.git
+   php artisan plugin:install Amorium.Sections --from=https://github.com/AmoriumCms/sections.git
+   php artisan plugin:install Amorium.Post --from=https://github.com/AmoriumCms/post.git
+   php artisan plugin:install Amorium.Navigation --from=https://github.com/AmoriumCms/navigation.git
+   php artisan plugin:install Amorium.Form --from=https://github.com/AmoriumCms/form.git
+   php artisan plugin:install Amorium.Business --from=https://github.com/AmoriumCms/business.git
+   php artisan plugin:install Amorium.Demo --from=https://github.com/AmoriumCms/demo.git
+   php artisan plugin:install Amorium.Translate --from=https://github.com/AmoriumCms/translate.git
+   php artisan theme:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/theme.git
    ```
 
 3. Kök dizinde sırasıyla çalıştırın:
@@ -32,10 +32,10 @@ Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch
    ```bash
    php artisan october:migrate
    php artisan tailor:migrate
-   php artisan theme:use amorium-amorium
+   php artisan theme:use amoriumcms-amorium
    ```
 
-   Marketplace ve `theme:install` temayı `themes/amorium-amorium` klasörüne kurar. Zip paketinden kopyaladıysanız klasör adı `amorium` olur.
+   Marketplace ve `theme:install` temayı `themes/amoriumcms-amorium` klasörüne kurar. Zip paketinden kopyaladıysanız klasör adı `amorium` olur.
 
 4. Demo içeriği yükleyin. Panelde **Ayarlar > CMS > Demo İçerik > Demo İçeriği Yükle** veya komut satırından:
 
