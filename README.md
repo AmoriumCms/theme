@@ -1,34 +1,41 @@
 # Amorium
 
-October CMS 4 için Amorium teması ve eklentileri.
+October CMS 4 için Amorium teması.
 
 Gereksinim: Kurulu bir October CMS 4 sitesi (PHP 8.2+, MySQL InnoDB).
+
+Tema şu eklentilerle çalışır, her biri ayrı bir depodadır:
+`Amorium.Pages`, `Amorium.Sections`, `Amorium.Post`, `Amorium.Navigation`, `Amorium.Form`, `Amorium.Business`, `Amorium.Demo`, `Amorium.Translate`.
 
 ## Kurulum
 
 Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch?v=gORhqjjb7X0)
 
-1. Repoyu indirin ve `themes` ile `plugins` klasörlerini October kök dizinine kopyalayın.
+1. `.env` dosyasında `DB_URL` sonuna `?engine=InnoDB` ekleyin.
+
+2. Temayı ve eklentileri kurun. October Marketplace'ten veya doğrudan bu depolardan:
 
    ```bash
-   git clone https://github.com/tulparstudyo/amorium-theme.git
-   cp -r amorium-theme/themes amorium-theme/plugins /october/kok/dizini/
+   php artisan plugin:install Amorium.Pages --from=https://github.com/tulparstudyo/amorium-pages-plugin.git
+   php artisan plugin:install Amorium.Sections --from=https://github.com/tulparstudyo/amorium-sections-plugin.git
+   php artisan plugin:install Amorium.Post --from=https://github.com/tulparstudyo/amorium-post-plugin.git
+   php artisan plugin:install Amorium.Navigation --from=https://github.com/tulparstudyo/amorium-navigation-plugin.git
+   php artisan plugin:install Amorium.Form --from=https://github.com/tulparstudyo/amorium-form-plugin.git
+   php artisan plugin:install Amorium.Business --from=https://github.com/tulparstudyo/amorium-business-plugin.git
+   php artisan plugin:install Amorium.Demo --from=https://github.com/tulparstudyo/amorium-demo-plugin.git
+   php artisan plugin:install Amorium.Translate --from=https://github.com/tulparstudyo/amorium-translate-plugin.git
+   php artisan theme:install Amorium.Amorium --from=https://github.com/tulparstudyo/amorium-theme.git
    ```
-
-   - `themes/amorium` (demo içerik `demo` klasöründedir)
-   - `plugins/amorium` (business, demo, form, navigation, pages, post, sections, translate)
-
-2. `.env.example` içindeki değerleri sitenin `.env` dosyasına aktarın:
-   - `DB_URL` sonuna `?engine=InnoDB` eklenmeli.
-   - Otomatik çeviri için `TRANSLATE_ENABLED=true` ve `TRANSLATE_API_KEY` doldurulmalı.
 
 3. Kök dizinde sırasıyla çalıştırın:
 
    ```bash
    php artisan october:migrate
    php artisan tailor:migrate
-   php artisan theme:use amorium
+   php artisan theme:use amorium-amorium
    ```
+
+   Marketplace ve `theme:install` temayı `themes/amorium-amorium` klasörüne kurar. Zip paketinden kopyaladıysanız klasör adı `amorium` olur.
 
 4. Demo içeriği yükleyin. Panelde **Ayarlar > CMS > Demo İçerik > Demo İçeriği Yükle** veya komut satırından:
 
@@ -44,12 +51,20 @@ Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch
    php artisan tailor:propagate
    ```
 
+## Otomatik çeviri
+
+`.env` dosyasına ekleyin:
+
+```env
+TRANSLATE_ENABLED=true
+TRANSLATE_MODEL="gemini-flash-latest"
+TRANSLATE_API_KEY=
+```
+
 ## Güncelleme
 
-Repodaki yeni sürümü çekip `themes/amorium` ve `plugins/amorium` klasörlerini sitedekilerin üzerine kopyalayın, ardından:
-
 ```bash
-php artisan october:migrate
+php artisan october:update
 php artisan tailor:migrate
 ```
 
@@ -57,6 +72,6 @@ Sürümler `vX.Y.Z` etiketleriyle işaretlenir.
 
 ## Geliştirme
 
-Bu repo elle düzenlenmez. Geliştirme projesindeki `themes/amorium/scripts/package.ps1` betiği paketi oluşturur, bu klasörü günceller, commit eder ve sürüm etiketini ekler.
+Bu repo elle düzenlenmez. Geliştirme projesindeki `themes/amorium/scripts/package.ps1` betiği temayı ve eklentileri ayrı depolara yazar, commit eder ve sürüm etiketlerini ekler.
 
-Tema CSS dosyası derlenmiş olarak gelir. Tasarımı değiştirmek için `themes/amorium` klasöründe `npm install` ve `npm run build` çalıştırın.
+Tema CSS dosyası derlenmiş olarak gelir. Tasarımı değiştirmek için tema klasöründe `npm install` ve `npm run build` çalıştırın.
