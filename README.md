@@ -6,6 +6,8 @@ Gereksinim: Kurulu bir October CMS 4 sitesi (PHP 8.2+, MySQL InnoDB).
 
 ## Kurulum
 
+Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch?v=gORhqjjb7X0)
+
 1. Repoyu indirin ve `themes` ile `plugins` klasörlerini October kök dizinine kopyalayın.
 
    ```bash
