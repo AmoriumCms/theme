@@ -6,11 +6,4 @@ homepage: ''
 code: amorium
 form: config/fields.yaml
 require:
-    - Amorium.Pages
-    - Amorium.Sections
-    - Amorium.Post
-    - Amorium.Navigation
-    - Amorium.Form
-    - Amorium.Business
-    - Amorium.Demo
-    - Amorium.Translate
+    - AmoriumCms.Amorium

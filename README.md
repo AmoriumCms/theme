@@ -4,8 +4,7 @@ October CMS 4 için Amorium teması.
 
 Gereksinim: Kurulu bir October CMS 4 sitesi (PHP 8.2+, MySQL InnoDB).
 
-Tema şu eklentilerle çalışır, her biri ayrı bir depodadır:
-`Amorium.Pages`, `Amorium.Sections`, `Amorium.Post`, `Amorium.Navigation`, `Amorium.Form`, `Amorium.Business`, `Amorium.Demo`, `Amorium.Translate`.
+Tema `AmoriumCms.Amorium` eklentisiyle çalışır. Sayfalar, section'lar, yazılar, menüler, formlar, işletme bilgileri, demo içerik ve otomatik çeviri bu tek eklentidedir.
 
 ## Kurulum
 
@@ -13,17 +12,10 @@ Kurulum videosu: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/watch
 
 1. `.env` dosyasında `DB_URL` sonuna `?engine=InnoDB` ekleyin.
 
-2. Temayı ve eklentileri kurun. October Marketplace'ten veya doğrudan bu depolardan:
+2. Temayı ve eklentiyi kurun. October Marketplace'ten veya doğrudan bu depolardan:
 
    ```bash
-   php artisan plugin:install Amorium.Pages --from=https://github.com/AmoriumCms/pages.git
-   php artisan plugin:install Amorium.Sections --from=https://github.com/AmoriumCms/sections.git
-   php artisan plugin:install Amorium.Post --from=https://github.com/AmoriumCms/post.git
-   php artisan plugin:install Amorium.Navigation --from=https://github.com/AmoriumCms/navigation.git
-   php artisan plugin:install Amorium.Form --from=https://github.com/AmoriumCms/form.git
-   php artisan plugin:install Amorium.Business --from=https://github.com/AmoriumCms/business.git
-   php artisan plugin:install Amorium.Demo --from=https://github.com/AmoriumCms/demo.git
-   php artisan plugin:install Amorium.Translate --from=https://github.com/AmoriumCms/translate.git
+   php artisan plugin:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/plugin.git
    php artisan theme:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/theme.git
    ```
 
@@ -72,6 +64,6 @@ Sürümler `vX.Y.Z` etiketleriyle işaretlenir.
 
 ## Geliştirme
 
-Bu repo elle düzenlenmez. Geliştirme projesindeki `themes/amorium/scripts/package.ps1` betiği temayı ve eklentileri ayrı depolara yazar, commit eder ve sürüm etiketlerini ekler.
+Bu repo elle düzenlenmez. Geliştirme projesindeki `themes/amorium/scripts/package.ps1` betiği temayı ve eklentiyi ayrı depolara yazar, commit eder ve sürüm etiketlerini ekler.
 
 Tema CSS dosyası derlenmiş olarak gelir. Tasarımı değiştirmek için tema klasöründe `npm install` ve `npm run build` çalıştırın.
