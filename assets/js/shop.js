@@ -768,18 +768,16 @@
         };
 
         const renderMethods = () => {
-            const shipping = root.querySelector('[data-shop-shipping-methods]');
-            shipping.innerHTML = state.shipping_methods.length
-                ? state.shipping_methods.map((method) => choice(
-                    'shipping_method_id',
-                    method.id,
-                    method.id === state.selection.shipping_method_id,
-                    esc(method.name),
-                    [method.description, method.free_over ? t('Free over :amount', { amount: money(method.free_over, method.currency) }) : null].filter(Boolean).map(esc).join(' · '),
-                    `<span class="whitespace-nowrap">${method.price > 0 ? esc(money(method.price, method.currency)) : esc(t('Free'))}</span>`
-                )).join('')
-                : `<p class="text-muted">${esc(t('No shipping method is available.'))}</p>`;
-
+            const shipping = root.querySelector('[data-shop-shipping]');
+            const quote = state.shipping;
+            if (!quote || !quote.available) {
+                shipping.innerHTML = `<p class="text-muted">${esc(quote?.message || t('No shipping method is available.'))}</p>`;
+            }
+            else {
+                const price = quote.price > 0 ? money(quote.price, quote.currency) : t('Free');
+                const note = quote.free_over ? t('Free over :amount', { amount: money(quote.free_over, quote.currency) }) : '';
+                shipping.innerHTML = `<div class="flex justify-between gap-3"><span>${esc(quote.name)}</span><span class="whitespace-nowrap">${esc(price)}</span></div>${note ? `<p class="mt-1 text-sm text-muted">${esc(note)}</p>` : ''}`;
+            }
             const payment = root.querySelector('[data-shop-payment-methods]');
             payment.innerHTML = state.payment_methods.length
                 ? state.payment_methods.map((method) => choice(
@@ -797,9 +795,49 @@
             root.querySelector('[data-shop-summary]').innerHTML = totalsHtml(state.cart);
         };
 
+        const showPaymentError = (data) => {
+            const params = new URLSearchParams(window.location.search);
+            const generic = t('The card payment could not be completed.');
+            const gateway = [data?.payment_error, params.get('payment_message')]
+                .map((value) => (value || '').trim())
+                .find((value) => value && value !== generic) || '';
+            const failed = params.has('payment_error') || params.has('payment_message') || !!data?.payment_error;
+            const banner = root.querySelector('[data-shop-payment-error]');
+            if (!failed && !gateway) {
+                return;
+            }
+            if (banner) {
+                banner.replaceChildren();
+                const summary = document.createElement('span');
+                summary.textContent = generic;
+                banner.append(summary);
+                if (gateway) {
+                    const detail = document.createElement('span');
+                    detail.className = 'mt-1 block';
+                    detail.textContent = gateway;
+                    banner.append(detail);
+                }
+                banner.classList.remove('hidden');
+            }
+            if (placeError) {
+                placeError.textContent = [generic, gateway].filter(Boolean).join(' ');
+            }
+            if (!root.dataset.paymentErrorShown) {
+                root.dataset.paymentErrorShown = '1';
+                banner?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (params.has('payment_error') || params.has('payment_message')) {
+                params.delete('payment_error');
+                params.delete('payment_message');
+                const next = params.toString();
+                history.replaceState(null, '', window.location.pathname + (next ? `?${next}` : '') + window.location.hash);
+            }
+        };
+
         const apply = (data) => {
             state = data;
             rememberCart(data.cart);
+            showPaymentError(data);
             if (!data.cart.items.length) {
                 root.querySelector('[data-shop-checkout-loading]').classList.add('hidden');
                 form.classList.add('hidden');
@@ -836,7 +874,6 @@
         // Choices that change the totals are saved at once; the guest address is sent when the order is placed
         const quickPayload = () => {
             const payload = {
-                shipping_method_id: parseInt(form.querySelector('[name="shipping_method_id"]:checked')?.value, 10) || null,
                 payment_method: form.querySelector('[name="payment_method"]:checked')?.value || null,
                 customer_note: form.querySelector('[data-field="customer_note"]').value.trim() || null,
             };
@@ -886,7 +923,7 @@
         };
 
         form.addEventListener('change', (event) => {
-            if (event.target.matches('[name="shipping_method_id"], [name="payment_method"], [name="shipping_address_id"], [name="billing_address_id"], [data-field="email"], [data-field="customer_note"]')) {
+            if (event.target.matches('[name="payment_method"], [name="shipping_address_id"], [name="billing_address_id"], [data-field="email"], [data-field="customer_note"]')) {
                 clearErrors(form);
                 save(quickPayload());
             }
@@ -948,13 +985,13 @@
                 const result = await api('POST', 'checkout/place', { expected_total: state.cart.totals.grand_total }, { 'Idempotency-Key': idempotencyKey });
                 const order = result.data;
 
-                cartToken.set(null);
-                updateCartCount(0);
-
                 if (order.payment_instructions?.type === 'redirect' && order.payment_instructions.url) {
                     window.location.href = order.payment_instructions.url;
                     return;
                 }
+
+                cartToken.set(null);
+                updateCartCount(0);
 
                 const url = new URL(pageUrl('order', { number: order.number }), window.location.href);
                 url.searchParams.set('placed', '1');
@@ -999,6 +1036,7 @@
                 form.classList.add('grid');
             }
             catch (error) {
+                showPaymentError(null);
                 root.querySelector('[data-shop-checkout-loading]').classList.add('hidden');
                 root.querySelector('[data-shop-checkout-empty]').classList.remove('hidden');
                 if (error.code !== 'CART_NOT_FOUND') {
@@ -1015,6 +1053,11 @@
         const number = root.dataset.number;
         const params = new URLSearchParams(window.location.search);
         const guestToken = params.get('token');
+
+        if (params.get('placed') === '1') {
+            cartToken.set(null);
+            updateCartCount(0);
+        }
 
         const render = (order) => {
             const instructions = order.payment_instructions;
@@ -1095,6 +1138,7 @@
                             <dl class="mt-4 space-y-1 border-t border-line pt-4 text-sm dark:border-night-line">
                                 <div class="flex justify-between gap-3"><dt class="text-muted">${esc(t('Payment method'))}</dt><dd>${esc(order.payment_method.name)}</dd></div>
                                 ${order.shipping_method ? `<div class="flex justify-between gap-3"><dt class="text-muted">${esc(t('Shipping method'))}</dt><dd>${esc(order.shipping_method)}</dd></div>` : ''}
+                                ${order.tracking_code ? `<div class="flex justify-between gap-3"><dt class="text-muted">${esc(t('Tracking code'))}</dt><dd>${order.tracking_url ? `<a href="${esc(order.tracking_url)}" class="text-primary" target="_blank" rel="noopener">${esc(order.tracking_code)}</a>` : esc(order.tracking_code)}</dd></div>` : ''}
                             </dl>
                         </div>
                         <div class="rounded-md bg-surface p-6 shadow dark:bg-night-surface">
@@ -1486,6 +1530,273 @@
         load();
     };
 
+    // The catalog keeps filters and the page in the query string. Pages 1–4 are appended as
+    // the sentinel scrolls into view; from page 5 on, each click of Load more appends one page.
+    const catalogPage = (root) => {
+        if (!window.oc?.ajax) {
+            return;
+        }
+
+        const grid = root.querySelector('[data-shop-grid]');
+        const results = root.querySelector('[data-shop-results]');
+        const empty = root.querySelector('[data-shop-empty]');
+        const count = root.querySelector('[data-shop-count]');
+        const sort = root.querySelector('[data-shop-sort]');
+        const search = root.querySelector('[data-shop-search]');
+        const moreWrap = root.querySelector('[data-shop-more-wrap]');
+        const more = root.querySelector('[data-shop-more]');
+        const loading = root.querySelector('[data-shop-loading]');
+        const sentinel = root.querySelector('[data-shop-sentinel]');
+
+        if (!grid || !more || !moreWrap || !sentinel) {
+            return;
+        }
+
+        const scrollPages = Math.max(1, Number(root.dataset.scrollPages) || 4);
+        let loaded = Math.max(1, Number(root.dataset.page) || 1);
+        let last = Math.max(1, Number(root.dataset.lastPage) || 1);
+        let busy = false;
+        let generation = 0;
+
+        const listingUrl = (value) => {
+            const url = new URL(value, window.location.origin);
+            url.searchParams.delete('page');
+            url.hash = '';
+            return url;
+        };
+
+        const syncPager = () => {
+            const hasMore = loaded < last;
+            moreWrap.classList.toggle('hidden', !(hasMore && loaded >= scrollPages));
+            const next = new URL(window.location.href);
+            next.searchParams.set('page', String(Math.max(loaded + 1, 2)));
+            more.href = `${next.pathname}${next.search}`;
+            root.dataset.page = String(loaded);
+            root.dataset.lastPage = String(last);
+        };
+
+        const apply = (data, append) => {
+            loaded = Math.max(1, Number(data.page) || loaded);
+            last = Math.max(1, Number(data.lastPage) || last);
+
+            if (append) {
+                if (data.cards) {
+                    grid.insertAdjacentHTML('beforeend', data.cards);
+                }
+            }
+            else {
+                grid.innerHTML = data.cards || '';
+                if (typeof data.filters === 'string') {
+                    root.querySelectorAll('[data-shop-filters]').forEach((el) => {
+                        el.innerHTML = data.filters;
+                    });
+                }
+                if (typeof data.empty === 'string' && empty) {
+                    empty.innerHTML = data.empty;
+                }
+                if (typeof data.count === 'string' && count) {
+                    count.textContent = data.count.trim();
+                }
+                const option = sort?.querySelector(`[data-sort="${CSS.escape(data.sort || 'newest')}"]`);
+                if (option) {
+                    option.selected = true;
+                }
+                if (search) {
+                    search.value = data.q || '';
+                }
+            }
+
+            const hasProducts = grid.children.length > 0;
+            results?.classList.toggle('hidden', !hasProducts);
+            empty?.classList.toggle('hidden', hasProducts);
+            syncPager();
+        };
+
+        const request = (url, single) => window.oc.ajax('shopCatalog::onCatalogPage', {
+            url: url.toString(),
+            data: single ? { single: 1 } : {},
+            error: () => false,
+        });
+
+        const nearSentinel = () => sentinel.getBoundingClientRect().top <= window.innerHeight + 400;
+
+        const open = async ({ url, append, historyMode, scroll }) => {
+            const current = ++generation;
+            const previous = window.location.href;
+            let succeeded = false;
+            busy = true;
+            loading?.classList.remove('hidden');
+            grid.setAttribute('aria-busy', 'true');
+
+            if (historyMode === 'push') {
+                history.pushState({ shopCatalog: true }, '', url);
+            }
+
+            try {
+                const data = await request(url, append);
+                if (current !== generation) {
+                    return;
+                }
+
+                apply(data, append);
+                const shown = new URL(historyMode === 'none' ? window.location.href : url, window.location.origin);
+                const returned = Math.max(1, Number(data.page) || 1);
+                if (returned > 1) {
+                    shown.searchParams.set('page', String(returned));
+                }
+                else {
+                    shown.searchParams.delete('page');
+                }
+                history.replaceState({ shopCatalog: true }, '', shown);
+                syncPager();
+                succeeded = true;
+
+                if (scroll && !append) {
+                    const target = results || grid;
+                    const top = target.getBoundingClientRect().top;
+                    if (top < 96 || top > window.innerHeight) {
+                        target.scrollIntoView({ block: 'start' });
+                    }
+                }
+            }
+            catch (error) {
+                if (current !== generation) {
+                    return;
+                }
+                if (historyMode === 'push') {
+                    history.replaceState({ shopCatalog: true }, '', previous);
+                }
+                notify(error?.$env?.getMessage?.() || error?.message || t('Something went wrong. Please try again later.'), 'error');
+            }
+            finally {
+                if (current === generation) {
+                    busy = false;
+                    loading?.classList.add('hidden');
+                    grid.removeAttribute('aria-busy');
+                    if (succeeded && loaded < scrollPages && loaded < last && nearSentinel()) {
+                        loadNext();
+                    }
+                }
+            }
+        };
+
+        const loadNext = () => {
+            if (busy || loaded >= last || loaded >= scrollPages) {
+                return;
+            }
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', String(loaded + 1));
+            open({ url, append: true, historyMode: 'replace', scroll: false });
+        };
+
+        root.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+            }
+
+            const moreLink = event.target.closest('[data-shop-more]');
+            if (moreLink && root.contains(moreLink)) {
+                event.preventDefault();
+                if (busy || loaded >= last) {
+                    return;
+                }
+                const url = new URL(window.location.href);
+                url.searchParams.set('page', String(loaded + 1));
+                open({ url, append: true, historyMode: 'replace', scroll: false });
+                return;
+            }
+
+            const link = event.target.closest('a');
+            if (!link || !root.contains(link) || (link.target && link.target !== '_self')) {
+                return;
+            }
+
+            let next;
+            try {
+                next = new URL(link.href, window.location.origin);
+            }
+            catch (error) {
+                return;
+            }
+
+            if (next.origin !== window.location.origin || next.pathname !== window.location.pathname) {
+                return;
+            }
+
+            event.preventDefault();
+            next = listingUrl(next);
+            if (next.search === listingUrl(window.location.href).search && loaded === 1) {
+                return;
+            }
+            open({ url: next, append: false, historyMode: 'push', scroll: true });
+        });
+
+        root.addEventListener('submit', (event) => {
+            const form = event.target;
+            if (!(form instanceof HTMLFormElement) || (form.getAttribute('method') || 'get').toLowerCase() !== 'get') {
+                return;
+            }
+
+            event.preventDefault();
+            const next = new URL(form.action, window.location.origin);
+            const params = new URLSearchParams();
+            for (const [key, value] of new FormData(form).entries()) {
+                if (typeof value === 'string' && value.trim() !== '') {
+                    params.append(key, value.trim());
+                }
+            }
+            params.delete('page');
+            next.search = params.toString();
+            next.hash = '';
+
+            if (next.pathname !== window.location.pathname) {
+                window.location.assign(next);
+                return;
+            }
+            open({ url: next, append: false, historyMode: 'push', scroll: true });
+        });
+
+        sort?.addEventListener('change', () => {
+            const next = listingUrl(window.location.href);
+            const value = sort.selectedOptions[0]?.dataset.sort || 'newest';
+            if (value === 'newest') {
+                next.searchParams.delete('sort');
+            }
+            else {
+                next.searchParams.set('sort', value);
+            }
+            open({ url: next, append: false, historyMode: 'push', scroll: true });
+        });
+
+        window.addEventListener('popstate', () => {
+            if (!root.isConnected) {
+                return;
+            }
+            open({ url: new URL(window.location.href), append: false, historyMode: 'none', scroll: false });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+                loadNext();
+            }
+        }, { rootMargin: '0px 0px 400px 0px' });
+        observer.observe(sentinel);
+
+        syncPager();
+        const addressPage = Math.max(1, Number(new URL(window.location.href).searchParams.get('page')) || 1);
+        if (addressPage !== loaded) {
+            const fixed = new URL(window.location.href);
+            if (loaded > 1) {
+                fixed.searchParams.set('page', String(loaded));
+            }
+            else {
+                fixed.searchParams.delete('page');
+            }
+            history.replaceState({ shopCatalog: true }, '', fixed);
+            syncPager();
+        }
+    };
+
     const pages = {
         product: productPage,
         cart: cartPage,
@@ -1495,6 +1806,7 @@
         addresses: addressesPage,
         favorites: favoritesPage,
         reviews: myReviewsPage,
+        catalog: catalogPage,
     };
 
     const start = () => {

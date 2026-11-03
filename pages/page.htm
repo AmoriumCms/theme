@@ -47,6 +47,6 @@ function onEnd()
         {# Prefixed so numeric slugs stay string keys in merge #}
         {% set countKey = 'key-' ~ (item.section.slug ?: item.section.id) %}
         {% set sectionCounts = sectionCounts|merge({ (countKey): sectionCounts[countKey]|default(0) + 1 }) %}
-        {% partial 'site/section' block=item.section type=item.section_type background=item.background_color data=item.section_data index=sectionCounts[countKey] %}
+        {% partial 'site/section' block=item.section type=item.section_type background=item.background_color spacing=item.section_spacing data=item.section_data index=sectionCounts[countKey] %}
     {% endif %}
 {% endfor %}

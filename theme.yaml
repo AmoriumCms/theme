@@ -8,3 +8,10 @@ form: config/fields.yaml
 require:
     - AmoriumCms.Amorium
     - RainLab.User
+sectionSpacings:
+    'py-0': None
+    'md:py-12 py-8': Small
+    'md:py-32 py-20': Large
+    'md:py-40 py-24': Extra large
+    'md:pt-24 pt-16 pb-0': Top only
+    'md:pb-24 pb-16 pt-0': Bottom only

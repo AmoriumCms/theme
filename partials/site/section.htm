@@ -15,10 +15,10 @@
 >
     {% if sectionType == 'boxed' %}
         <div class="container">
-            {{ block|sectionHtml(data, index)|raw }}
+            {{ block|sectionHtml(data, index, spacing)|raw }}
         </div>
     {% else %}
-        {{ block|sectionHtml(data, index)|raw }}
+        {{ block|sectionHtml(data, index, spacing)|raw }}
     {% endif %}
 </div>
 

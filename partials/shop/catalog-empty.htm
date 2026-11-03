@@ -1,0 +1,7 @@
+<div class="rounded-md border border-dashed border-line p-12 text-center dark:border-night-line">
+    <i class="ri-search-eye-line text-5xl text-muted" aria-hidden="true"></i>
+    <p class="mt-4 text-lg">{{ 'No products found.'|_ }}</p>
+    {% if shopCatalog.hasFilters %}
+        <a href="{{ shopCatalog.clearUrl }}" class="btn-primary mt-6">{{ 'Clear filters'|_ }}</a>
+    {% endif %}
+</div>

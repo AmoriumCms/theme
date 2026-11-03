@@ -1,9 +1,19 @@
 {#
     The product listing shared by the shop, category and brand pages.
+    Filters and the page stay in the query string. The first four pages load as the
+    visitor scrolls; later pages load from the button. Both happen without a refresh.
     Variables: title, description, crumbs, subcategories, showBrands, showSearch
 #}
 {% set sorts = { newest: 'Newest', price_asc: 'Price: low to high', price_desc: 'Price: high to low', name: 'Name: A to Z' } %}
-<section class="relative py-2 ">
+{% set loaded = loadedPage|default(pagination.page) %}
+{% set hasMore = loaded < pagination.last_page %}
+<section
+    class="relative py-2"
+    data-shop-page="catalog"
+    data-page="{{ loaded }}"
+    data-last-page="{{ pagination.last_page }}"
+    data-scroll-pages="4"
+>
     <div class="container">
         {% partial 'shop/breadcrumbs' items=crumbs|default([]) %}
 
@@ -28,11 +38,11 @@
                         <span><i class="ri-filter-3-line" aria-hidden="true"></i> {{ 'Filters'|_ }}</span>
                         <i class="ri-arrow-down-s-line duration-300 group-open:rotate-180" aria-hidden="true"></i>
                     </summary>
-                    <div class="mt-6">
+                    <div class="mt-6" data-shop-filters>
                         {% partial 'shop/filters' showBrands=showBrands %}
                     </div>
                 </details>
-                <div class="hidden lg_992:block">
+                <div class="hidden lg_992:block" data-shop-filters>
                     {% partial 'shop/filters' showBrands=showBrands %}
                 </div>
             </aside>
@@ -40,44 +50,56 @@
             <div class="min-w-0">
                 <div class="mb-6 flex flex-wrap items-center gap-3">
                     {% if showSearch %}
-                        <form method="get" action="{{ shopCatalog.url }}" class="relative min-w-56 flex-1" role="search">
+                        <form method="get" action="{{ shopCatalog.url }}" class="relative min-w-56 flex-1" role="search" data-shop-filter-form>
                             {% for name, value in shopCatalog.hiddenFields(['q']) %}
                                 <input type="hidden" name="{{ name }}" value="{{ value }}" />
                             {% endfor %}
-                            <input type="search" name="q" value="{{ params.q|default('') }}" placeholder="{{ 'Search products'|_ }}" class="w-full rounded-md border border-line bg-page py-2 ps-10 pe-3 text-body outline-none duration-300 focus:border-primary dark:border-night-line dark:bg-night-page dark:text-night-body" aria-label="{{ 'Search products'|_ }}" />
+                            <input type="search" name="q" value="{{ params.q|default('') }}" placeholder="{{ 'Search products'|_ }}" class="w-full rounded-md border border-line bg-page py-2 ps-10 pe-3 text-body outline-none duration-300 focus:border-primary dark:border-night-line dark:bg-night-page dark:text-night-body" aria-label="{{ 'Search products'|_ }}" data-shop-search />
                             <i class="ri-search-line absolute start-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true"></i>
                         </form>
                     {% endif %}
 
-                    <p class="text-muted {{ showSearch ? '' : 'flex-1' }}">{{ ':count products'|_({ count: pagination.total }) }}</p>
+                    <p class="text-muted {{ showSearch ? '' : 'flex-1' }}" data-shop-count>{{ ':count products'|_({ count: pagination.total }) }}</p>
 
                     <label class="flex items-center gap-2">
                         <span class="text-sm text-muted">{{ 'Sort by'|_ }}</span>
-                        <select class="rounded-md border border-line bg-page px-3 py-2 text-body outline-none focus:border-primary dark:border-night-line dark:bg-night-page dark:text-night-body" onchange="location.href = this.value">
+                        <select class="rounded-md border border-line bg-page px-3 py-2 text-body outline-none focus:border-primary dark:border-night-line dark:bg-night-page dark:text-night-body" data-shop-sort>
                             {% for value, label in sorts %}
-                                <option value="{{ shopCatalog.url({ sort: value == 'newest' ? null : value }) }}" {{ params.sort == value ? 'selected' }}>{{ label|_ }}</option>
+                                <option value="{{ value }}" data-sort="{{ value }}" {{ params.sort == value ? 'selected' }}>{{ label|_ }}</option>
                             {% endfor %}
                         </select>
                     </label>
                 </div>
 
-                {% if products %}
-                    <div class="grid grid-cols-2 gap-4 md:gap-6 lg_992:grid-cols-4">
+                <div data-shop-results class="{{ products ? '' : 'hidden' }}">
+                    <div data-shop-grid class="grid grid-cols-2 gap-4 md:gap-6 lg_992:grid-cols-4">
                         {% for product in products %}
                             {% partial 'shop/product-card' product=product %}
                         {% endfor %}
                     </div>
+                </div>
 
-                    {% partial 'shop/pagination' %}
-                {% else %}
-                    <div class="rounded-md border border-dashed border-line p-12 text-center dark:border-night-line">
-                        <i class="ri-search-eye-line text-5xl text-muted" aria-hidden="true"></i>
-                        <p class="mt-4 text-lg">{{ 'No products found.'|_ }}</p>
-                        {% if shopCatalog.hasFilters %}
-                            <a href="{{ shopCatalog.clearUrl }}" class="btn-primary mt-6">{{ 'Clear filters'|_ }}</a>
-                        {% endif %}
+                <div data-shop-empty class="{{ products ? 'hidden' : '' }}">
+                    {% partial 'shop/catalog-empty' %}
+                </div>
+
+                <div class="mt-12 flex flex-col items-center gap-4" data-shop-pager>
+                    <p class="hidden text-muted" data-shop-loading role="status">
+                        <span class="flex items-center gap-2">
+                            <i class="ri-loader-4-line animate-spin text-xl" aria-hidden="true"></i>
+                            {{ 'Loading…'|_ }}
+                        </span>
+                    </p>
+                    <div data-shop-more-wrap class="hidden">
+                        <a href="{{ shopCatalog.url({ page: loaded + 1 }) }}" class="btn-primary" data-shop-more>{{ 'Load more'|_ }}</a>
                     </div>
-                {% endif %}
+                    <div data-shop-sentinel class="h-px w-full" aria-hidden="true"></div>
+                    {% if hasMore %}
+                        <noscript>
+                            <a href="{{ shopCatalog.url({ page: loaded + 1 }) }}" class="btn-primary">{{ 'Load more'|_ }}</a>
+                        </noscript>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

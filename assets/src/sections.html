@@ -2,7 +2,7 @@
 {% set image = data.background ? data.background|media : '' %}
 {% set phrases = data.phrases|default('')|replace({"\r": ""})|split("\n") %}
 {% set url = data.button_link ? data.button_link|link : '' %}
-<section class="py-36 lg:py-64 w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
+<section class="{{ section.custom_spacing ?: 'py-36 lg:py-64' }} w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
     <div class="absolute inset-0 bg-contrast/80"></div>
     <div class="container relative">
         <div class="grid grid-cols-1 mt-12">
@@ -28,7 +28,7 @@
 <!-- section 5 -->
 {% set image = data.image ? data.image|media : '' %}
 {% set url = data.button_link ? data.button_link|link : '' %}
-<section class="relative md:py-24 py-16 bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }} bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
     <div class="container relative">
         <div class="grid grid-cols-1 lg:grid-cols-12 md:grid-cols-2 gap-10 items-center">
             <div class="lg:col-span-5">
@@ -74,7 +74,7 @@
 {% set features = data.features|default([]) %}
 {% set steps = data.steps|default([]) %}
 {% set stepImages = ['design-thinking.svg', 'coding.svg', 'office-desk.svg'] %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container lg mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-2 pb-8 items-center">
             <div>
@@ -178,7 +178,7 @@
 
 <!-- section 7 -->
 {% set items = data.items|default([]) %}
-<section class="relative md:py-24 py-16 bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }} bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -243,7 +243,7 @@
 <!-- section 8 -->
 {% set image = data.background ? data.background|media : '' %}
 {% set url = data.button_link ? data.button_link|link : '' %}
-<section class="py-24 w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
+<section class="{{ section.custom_spacing ?: 'py-24' }} w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
     <div class="absolute inset-0 bg-contrast/80"></div>
     <div class="container relative">
         <div class="grid grid-cols-1 pb-8 text-center">
@@ -264,7 +264,7 @@
 
 <!-- section 9 -->
 {% set items = data.items|default([]) %}
-<section class="relative md:py-24 py-16 bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }} bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -311,7 +311,7 @@
 
 <!-- section 10 -->
 {% set plans = data.plans|default([]) %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -374,7 +374,7 @@
 {% set counters = data.counters|default([]) %}
 {% set logos = data.logos|default([]) %}
 {% set socialIcon = 'size-8 inline-flex items-center text-center justify-center tracking-wide border align-middle duration-500 bg-primary hover:bg-primary-dark border-primary hover:border-primary-dark text-white rounded-full' %}
-<section class="relative md:py-24 py-16 bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }} bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -450,7 +450,7 @@
 
 <!-- section 12 -->
 {% set posts = selectedPosts(data.posts) %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -488,7 +488,7 @@
 {% set phone = info.phone %}
 {% set email = info.email %}
 {% set address = info.address %}
-<section class="relative md:py-24 py-16 bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }} bg-surface dark:bg-night-surface" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 pb-8 text-center">
     {% if data.subtitle %}
@@ -598,7 +598,7 @@
         { label: 'Phone No.'|_, type: 'text' }
     ]
 }), section) : null %}
-<section class="py-36 lg:py-20 lg:pb-0 md:pb-8 w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
+<section class="{{ section.custom_spacing ?: 'py-36 lg:py-20 lg:pb-0 md:pb-8' }} w-full table relative bg-contrast bg-center bg-cover" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}">
     <div class="absolute inset-0 bg-contrast/80"></div>
     <div class="container relative">
         <div class="grid lg:grid-cols-12 mt-10 md:grid-cols-2 gap-2">
@@ -695,7 +695,7 @@
         </div>
     {% endif %}
 {% endset %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         {% if not image %}
             {{ heading }}
@@ -780,7 +780,7 @@
 {% set before = data.before_image ? data.before_image|media : '' %}
 {% set after = data.after_image ? data.after_image|media : '' %}
 {% set position = data.start_position matches '/^\\d+$/' ? min(data.start_position, 100) : 50 %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container relative">
         {% if data.subtitle or data.title or data.description %}
             <div class="grid grid-cols-1 pb-8 text-center">
@@ -822,7 +822,7 @@
 
 <!-- section 73 -->
 {% set paginator = postList(data.per_page) %}
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         {% if data.subtitle or data.title or data.description %}
             <div class="grid grid-cols-1 pb-8 text-center">
@@ -860,7 +860,7 @@
 {% set related = data.hide_related ? [] : relatedPosts(post, 3) %}
 {% set backUrl = data.back_link ? data.back_link|link : postListUrl() %}
 {% if not data.hide_header %}
-    <section class="relative table w-full bg-contrast bg-cover bg-center bg-no-repeat md:py-24 py-16" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}-header">
+    <section class="relative table w-full bg-contrast bg-cover bg-center bg-no-repeat {{ section.spacing }}" {% if image %}style="background-image: url('{{ image|replace({"'": "%27"}) }}')"{% endif %} id="{{ section.slug }}-{{ section.index }}-header">
         <div class="absolute inset-0 bg-contrast/80"></div>
         <div class="relative container">
             <div class="grid grid-cols-1 text-center">
@@ -873,7 +873,7 @@
     </section>
 {% endif %}
 
-<section class="relative md:py-24 py-16" id="{{ section.slug }}-{{ section.index }}">
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
     <div class="container">
         <div class="grid grid-cols-1 gap-7.5 md:grid-cols-12">
             <article class="md:col-span-6 lg:col-span-8">
@@ -939,3 +939,143 @@
     </div>
 </section>
 {% endif %}
+
+<!-- section 75 -->
+{% set products = shopProducts(data) %}
+{% set layout = data.layout in ['list', 'slider'] ? data.layout : 'grid' %}
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
+    <div class="container">
+        {% if data.subtitle or data.title or data.description %}
+            <div class="grid grid-cols-1 pb-8 text-center">
+                {% if data.subtitle %}
+                    <h6 class="text-primary text-base font-medium uppercase mb-2">{{ data.subtitle }}</h6>
+                {% endif %}
+                {% if data.title %}
+                    <h3 class="mb-4 md:text-2xl text-xl font-medium">{{ data.title }}</h3>
+                {% endif %}
+                {% if data.description %}
+                    <div class="rich-content text-muted max-w-xl mx-auto">{{ data.description|raw }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if products is empty %}
+            <p class="text-center text-muted">{{ 'No products found.'|_ }}</p>
+        {% elseif layout == 'list' %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                {% for product in products %}
+                    {% partial 'shop/product-row' product=product %}
+                {% endfor %}
+            </div>
+        {% elseif layout == 'slider' %}
+            <div class="products-slider relative mt-8">
+                <div class="products-track flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2">
+                    {% for product in products %}
+                        <div class="products-slide shrink-0 snap-start">
+                            {% partial 'shop/product-card' product=product %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="products-prev absolute top-1/2 -translate-y-1/2 start-0 -ms-3 z-10 flex size-10 items-center justify-center rounded-full bg-surface text-xl shadow duration-300 hover:text-primary dark:bg-night-surface" aria-label="{{ 'Previous'|_ }}" hidden>
+                    <i class="ri-arrow-left-s-line rtl:rotate-180"></i>
+                </button>
+                <button type="button" class="products-next absolute top-1/2 -translate-y-1/2 end-0 -me-3 z-10 flex size-10 items-center justify-center rounded-full bg-surface text-xl shadow duration-300 hover:text-primary dark:bg-night-surface" aria-label="{{ 'Next'|_ }}" hidden>
+                    <i class="ri-arrow-right-s-line rtl:rotate-180"></i>
+                </button>
+            </div>
+        {% else %}
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+                {% for product in products %}
+                    {% partial 'shop/product-card' product=product %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- section 76 -->
+{% set items = data.items|default([]) %}
+{% set layout = data.layout in ['list', 'slider', 'single_line'] ? data.layout : 'grid' %}
+{% set gridClasses = {
+    1: 'grid-cols-1 gap-6',
+    2: 'grid-cols-1 md:grid-cols-2 gap-6',
+    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+    4: 'grid-cols-2 lg:grid-cols-4 gap-6',
+    5: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4',
+    6: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4',
+    7: 'grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4',
+    8: 'grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4',
+    9: 'grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3',
+    10: 'grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3',
+    11: 'grid-cols-3 md:grid-cols-6 lg:grid-cols-11 gap-3',
+    12: 'grid-cols-3 md:grid-cols-6 lg:grid-cols-12 gap-3'
+} %}
+{% set columns = gridClasses[data.columns|default(3)] is defined ? data.columns|default(3) : 3 %}
+{% set compact = layout == 'grid' and columns > 4 %}
+{% set wrapperClass = {
+    list: 'flex flex-col gap-6',
+    grid: 'grid ' ~ gridClasses[columns],
+    single_line: 'banner-line flex gap-6 overflow-x-auto snap-x snap-mandatory',
+    slider: 'banner-track flex transition-transform duration-500 ease-in-out'
+}[layout] %}
+{% set itemClass = {
+    list: 'rounded-md shadow-sm aspect-[2/1] md:aspect-[4/1]',
+    grid: 'rounded-md shadow-sm aspect-[4/3]',
+    single_line: 'rounded-md shadow-sm aspect-[4/3] min-w-64 flex-1 shrink-0 snap-start',
+    slider: 'w-full shrink-0 aspect-[16/9] md:aspect-[21/9]'
+}[layout] %}
+<section class="relative {{ section.spacing }}" id="{{ section.slug }}-{{ section.index }}">
+    <div class="container">
+        {% if data.subtitle or data.title or data.description %}
+            <div class="grid grid-cols-1 pb-8 text-center">
+                {% if data.subtitle %}
+                    <h6 class="text-primary text-base font-medium uppercase mb-2">{{ data.subtitle }}</h6>
+                {% endif %}
+                {% if data.title %}
+                    <h3 class="mb-4 md:text-2xl text-xl font-medium">{{ data.title }}</h3>
+                {% endif %}
+                {% if data.description %}
+                    <div class="rich-content text-muted max-w-xl mx-auto">{{ data.description|raw }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if items %}
+            {% if layout == 'slider' %}
+                <div class="banner-slider relative overflow-hidden rounded-md shadow-sm" data-interval="{{ data.interval|default(5000) }}">
+            {% endif %}
+            <div class="{{ wrapperClass }}">
+                {% for item in items %}
+                    {% set image = item.image ? item.image|media : '' %}
+                    {% set url = item.link ? item.link|link : '' %}
+                    {% set tag = url ? 'a' : 'div' %}
+                    <{{ tag }}{% if url %} href="{{ url }}"{% if url starts with 'http' and not (url starts with '/'|app) %} target="_blank" rel="noopener noreferrer"{% endif %}{% endif %} class="banner-item group relative block overflow-hidden {{ itemClass }}">
+                        {% if image %}
+                            <img src="{{ image }}" alt="{{ item.text|default('') }}" class="absolute inset-0 size-full object-cover duration-500 group-hover:scale-105" loading="{{ loop.first ? 'eager' : 'lazy' }}">
+                        {% else %}
+                            <div class="absolute inset-0 bg-primary/10"></div>
+                        {% endif %}
+                        {% if item.text %}
+                            <div class="absolute inset-0 bg-linear-to-t from-contrast/80 via-contrast/20 to-transparent"></div>
+                            <div class="absolute inset-x-0 bottom-0 {{ compact ? 'p-3 md:p-4' : 'p-6 md:p-8' }}">
+                                <p class="text-white {{ compact ? 'text-sm md:text-base' : 'text-lg md:text-2xl' }} font-medium leading-snug">{{ item.text|nl2br }}</p>
+                            </div>
+                        {% endif %}
+                    </{{ tag }}>
+                {% endfor %}
+            </div>
+            {% if layout == 'slider' %}
+                {% if items|length > 1 %}
+                    <button type="button" class="banner-prev absolute top-1/2 -translate-y-1/2 start-4 z-10 flex size-10 items-center justify-center rounded-full bg-white/80 text-xl text-contrast duration-300 hover:bg-white" aria-label="{{ 'Previous'|_ }}">
+                        <i class="ri-arrow-left-s-line rtl:rotate-180"></i>
+                    </button>
+                    <button type="button" class="banner-next absolute top-1/2 -translate-y-1/2 end-4 z-10 flex size-10 items-center justify-center rounded-full bg-white/80 text-xl text-contrast duration-300 hover:bg-white" aria-label="{{ 'Next'|_ }}">
+                        <i class="ri-arrow-right-s-line rtl:rotate-180"></i>
+                    </button>
+                    <div class="banner-dots absolute inset-x-0 bottom-4 z-10 flex justify-center gap-2" data-label="{{ 'Go to slide :number'|_({ number: '#' }) }}"></div>
+                {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
