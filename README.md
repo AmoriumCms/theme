@@ -12,7 +12,7 @@ Installation video: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/wa
 
 1. Add `?engine=InnoDB` to the end of `DB_URL` in the `.env` file.
 
-2. Install the theme and the plugin, from the October Marketplace or directly from these repositories:
+2. Install the theme from the October Marketplace. The plugin is a Composer dependency of the theme (`amoriumcms/amorium-plugin`), so it is installed together with it. To install directly from these repositories:
 
    ```bash
    php artisan plugin:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/plugin.git
