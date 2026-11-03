@@ -12,16 +12,24 @@ Installation video: [youtube.com/watch?v=gORhqjjb7X0](https://www.youtube.com/wa
 
 1. Add `?engine=InnoDB` to the end of `DB_URL` in the `.env` file.
 
-2. Install the theme from the October Marketplace. The plugin is a Composer dependency of the theme (`amoriumcms/amorium-plugin`), so it is installed together with it. To install directly from these repositories:
+2. Install the theme and the plugin from the admin panel:
+
+   1. Go to **Settings > Software Updates > Manage Plugins > Edit Composer**, add the plugin to the `require` section and save:
+
+      ```json
+      "amoriumcms/amorium-plugin": "^1.0.5"
+      ```
+
+   2. Find **Amorium** in the Marketplace and click **Install**. In the installation window choose **Install with Composer**. **Make a Copy** does not run Composer, so the plugin is not installed.
+   3. Under **Theme Dependencies**, clear the **AmoriumCms.Amorium** checkbox, because Composer installs it. Keep **RainLab.User** and **Seed Theme Data** selected.
+
+   The plugin, the database tables and the Tailor content tables are created during the installation, no command is needed. Then activate the theme in **Settings > Front-end Theme**.
+
+3. Or install from the command line, directly from these repositories, and run these commands in the root directory, in order:
 
    ```bash
    php artisan plugin:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/plugin.git
    php artisan theme:install AmoriumCms.Amorium --from=https://github.com/AmoriumCms/theme.git
-   ```
-
-3. Run these commands in the root directory, in order:
-
-   ```bash
    php artisan october:migrate
    php artisan tailor:migrate
    php artisan theme:use amoriumcms-amorium
